@@ -10,7 +10,7 @@ from color_generator import __author__, __version__
 
 
 setuptools.setup(
-    name="color-generator",
+    name="color-generation",
     version=__version__,
     author=__author__,
     # author_email="author@example.com",
