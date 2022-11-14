@@ -1,6 +1,10 @@
 # color-generator
 generate random good-looking colors
 
+## Installation
+`pip install color-generation`
+
+## usage example
 
 ```python
 import color_generator
