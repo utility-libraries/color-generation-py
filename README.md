@@ -1,4 +1,4 @@
-# py-color-generator
+# color-generator
 generate random good-looking colors
 
 
