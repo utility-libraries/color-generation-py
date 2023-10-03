@@ -3,21 +3,28 @@
 r"""
 
 """
+import re
+import colorsys
 
 
 class Color:
     _r, _g, _b = 0, 0, 0
 
     def __init__(self, *color):
-        # only one argument passed
-        if isinstance(color, tuple) and len(color) == 1:
+        r"""
+        Color(r, g, b)
+        Color((r, g, b))
+        Color([r, g, b])
+        Color('#HEXCOL')
+        """
+        if len(color) == 1:
             color = color[0]
 
-        if isinstance(color, str) and len(color) in (6, 7):
+        if isinstance(color, (tuple, list)) and len(color) == 3:
+            r, g, b = color
+        elif isinstance(color, str) and len(color) == 7:
             color = color.lstrip('#')
             r, g, b = tuple(int(color[i:i+2], 16) for i in range(0, len(color), 2))
-        elif isinstance(color, (tuple, list)) and len(color) == 3:
-            r, g, b = color
         else:
             raise ValueError('invalid color')
 
@@ -25,12 +32,68 @@ class Color:
         self.g = g
         self.b = b
 
+    @classmethod
+    def from_rgb(cls, r: int, g: int, b: int) -> 'Color':
+        return cls(r, g, b)
+
+    @classmethod
+    def from_hex(cls, hex_color: str, *, allow_irregular: bool = False) -> 'Color':
+        r"""
+
+        :param hex_color: '#HEXCOL'
+        :param allow_irregular: allow '#HEX' variants
+        :return:
+        """
+        if allow_irregular:
+            if re.fullmatch(r"#[0-9A-F]{3}", hex_color, re.IGNORECASE):
+                hex_color = hex_color.lstrip('#')
+                r, g, b = (int(hex_color[i:i+2], 16) for i in range(0, len(hex_color), 2))
+                return cls(r, g, b)
+            # maybe also len 9 or so
+        if re.fullmatch(r"#[0-9A-F]{6}", hex_color, re.IGNORECASE):
+            hex_color = hex_color.lstrip('#')
+            r, g, b = (int(hex_color[i:i+2], 16) for i in range(0, len(hex_color), 2))
+            return cls(r, g, b)
+        raise ValueError(f"invalid hex color passed ({hex_color!r})")
+
+    @classmethod
+    def from_hls(cls, h: float, l: float, s: float) -> 'Color':
+        r"""
+        :param h: color-angle
+        :param l: luma
+        :param s: saturation
+        """
+        r, g, b = colorsys.hls_to_rgb(h=h, l=l, s=s)
+        return cls(r, g, b)
+
+    @classmethod
+    def from_hsv(cls, h: float, s: float, v: float) -> 'Color':
+        r"""
+        :param h: hue
+        :param s: saturation
+        :param v: value
+        """
+        r, g, b = colorsys.hsv_to_rgb(h=h, s=s, v=v)
+        return cls(r, g, b)
+
+    @classmethod
+    def from_yiq(cls, y: float, i: float, q: float) -> 'Color':
+        r"""
+        :param y: luma
+        :param i: cyan-orange
+        :param q: magenta-green
+        """
+        r, g, b = colorsys.yiq_to_rgb(y=y, i=i, q=q)
+        return cls(r, g, b)
+
     @property
     def r(self):
         return self._r
 
     @r.setter
     def r(self, value):
+        if isinstance(value, float):
+            value = int(value)
         if not isinstance(value, int):
             raise TypeError('color requires an integer')
         if not (0 <= value <= 255):
@@ -43,6 +106,8 @@ class Color:
 
     @g.setter
     def g(self, value):
+        if isinstance(value, float):
+            value = int(value)
         if not isinstance(value, int):
             raise TypeError('color requires an integer')
         if not (0 <= value <= 255):
@@ -55,6 +120,8 @@ class Color:
 
     @b.setter
     def b(self, value):
+        if isinstance(value, float):
+            value = int(value)
         if not isinstance(value, int):
             raise TypeError('color requires an integer')
         if not (0 <= value <= 255):
@@ -67,15 +134,36 @@ class Color:
 
     @rgb.setter
     def rgb(self, value):
-        if not isinstance(value, (tuple, list)):
-            raise TypeError('color requires an integer')
-        self.r = value[0]
-        self.g = value[1]
-        self.b = value[2]
+        if not isinstance(value, (tuple, list)) or len(value) != 3:
+            raise TypeError('rgb requires tuple or list')
+        _r, _g, _b = self.rgb
+        r, g, b = value
+        try:
+            self.r = r
+            self.g = g
+            self.b = b
+        except BaseException as err:
+            # restore color if something failed
+            self._r = _r
+            self._g = _g
+            self._b = _b
+            raise err
 
     @property
     def hex(self):
         return '#%02x%02x%02x' % self.rgb
+
+    @property
+    def hls(self):
+        return colorsys.rgb_to_hls(self.r, self.g, self.b)
+
+    @property
+    def hsv(self):
+        return colorsys.rgb_to_hsv(self.r, self.g, self.b)
+
+    @property
+    def yiq(self):
+        return colorsys.rgb_to_yiq(self.r, self.g, self.b)
 
     def __repr__(self):
         return f'<{self.__class__.__qualname__} ({self.r},{self.g},{self.b})>'

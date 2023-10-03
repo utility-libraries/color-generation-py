@@ -18,7 +18,7 @@ with open(p.join(p.dirname(__file__), htmlTemplateName)) as file:
     template = file.read()
 
 
-print("Modes:", ', '.join(color_generator.generator.generationModes()))
+print("Modes:", ', '.join(color_generator.generation.generation_modes()))
 color_mode = input("Mode: ")
 
 
