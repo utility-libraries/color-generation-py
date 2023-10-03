@@ -17,10 +17,10 @@ setuptools.setup(
     description="generate random good-looking colors",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/PlayerG9/py-color-generator",
+    url="https://github.com/utility-libraries/color-generation-py",
     project_urls={
-        "Author Github": "https://github.com/PlayerG9",
-        "Bug Tracker": "https://github.com/PlayerG9/py-color-generator/issues",
+        "Organization Github": "https://github.com/utility-libraries",
+        "Bug Tracker": "https://github.com/utility-libraries/color-generation-py/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -29,5 +29,5 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.5",
+    python_requires=">=3.6",
 )
