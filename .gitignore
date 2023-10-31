@@ -1,5 +1,6 @@
 # Project Specific
 .idea/
+tmp/
 
 
 # Byte-compiled / optimized / DLL files
