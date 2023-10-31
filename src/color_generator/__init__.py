@@ -33,6 +33,7 @@ __version__ = '.'.join(str(_) for _ in __version_info__)
 __maintainer__ = "PlayerG9"
 __email__ = None
 __status__ = "Prototype"  # Prototype, Development, Production
+__description__ = "generate random good-looking colors"
 
 from .color import Color
 from .generator import generate, register_generator
