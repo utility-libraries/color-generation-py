@@ -35,4 +35,4 @@ __email__ = None
 __status__ = "Prototype"  # Prototype, Development, Production
 
 from .color import Color
-from .generation import generate
+from .generator import generate, register_generator
