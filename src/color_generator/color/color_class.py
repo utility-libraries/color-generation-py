@@ -5,6 +5,7 @@ r"""
 """
 import re
 import colorsys
+from ..exceptions import UnknownColorError, BadColorTypeError, BadColorRangeError
 
 
 class Color:
@@ -26,7 +27,7 @@ class Color:
             color = color.lstrip('#')
             r, g, b = tuple(int(color[i:i+2], 16) for i in range(0, len(color), 2))
         else:
-            raise ValueError('invalid color')
+            raise UnknownColorError(f'invalid color: {color!r}')
 
         self.r = r
         self.g = g
@@ -54,7 +55,7 @@ class Color:
             hex_color = hex_color.lstrip('#')
             r, g, b = (int(hex_color[i:i+2], 16) for i in range(0, len(hex_color), 2))
             return cls(r, g, b)
-        raise ValueError(f"invalid hex color passed ({hex_color!r})")
+        raise UnknownColorError(f"invalid hex color passed ({hex_color!r})")
 
     @classmethod
     def from_hls(cls, h: float, l: float, s: float) -> 'Color':
@@ -95,9 +96,9 @@ class Color:
         if isinstance(value, float):
             value = int(value)
         if not isinstance(value, int):
-            raise TypeError('color requires an integer')
+            raise BadColorTypeError('color requires an integer')
         if not (0 <= value <= 255):
-            raise ValueError('invalid color-range')
+            raise BadColorRangeError('invalid color-range')
         self._r = value
 
     @property
@@ -109,9 +110,9 @@ class Color:
         if isinstance(value, float):
             value = int(value)
         if not isinstance(value, int):
-            raise TypeError('color requires an integer')
+            raise BadColorTypeError('color requires an integer')
         if not (0 <= value <= 255):
-            raise ValueError('invalid color-range')
+            raise BadColorRangeError('invalid color-range')
         self._g = value
 
     @property
@@ -123,9 +124,9 @@ class Color:
         if isinstance(value, float):
             value = int(value)
         if not isinstance(value, int):
-            raise TypeError('color requires an integer')
+            raise BadColorTypeError('color requires an integer')
         if not (0 <= value <= 255):
-            raise ValueError('invalid color-range')
+            raise BadColorRangeError('invalid color-range')
         self._b = value
 
     @property
@@ -135,7 +136,7 @@ class Color:
     @rgb.setter
     def rgb(self, value):
         if not isinstance(value, (tuple, list)) or len(value) != 3:
-            raise TypeError('rgb requires tuple or list')
+            raise BadColorTypeError('rgb requires tuple or list of length 3')
         _r, _g, _b = self.rgb
         r, g, b = value
         try:
